@@ -7,7 +7,6 @@ function posts_exits($title) {
     $wpdb = & $GLOBALS['wpdb'];
     $table_prefix = $GLOBALS['table_prefix'];
     $title = addslashes($title);
-
     return $wpdb->get_var("select * from ${table_prefix}posts where post_title='$title'") !== NULL;
 }
 
@@ -40,13 +39,12 @@ foreach($blogs as $url => $blog) {
         $date = isset($item['pubDate']) ? strtotime($item['pubDate']) : time();
         $npost = array();
         $npost['post_title']   = $item['title'];
-        $npost['post_content'] = isset($item['content:encoded']) ?
-        $item['content:encoded'] : $item['description']; 
+        $npost['post_content'] = isset($item['content:encoded']) ? $item['content:encoded'] : html_entity_decode($item['description']); 
         $npost['post_status']  = 'publish';
         $npost['post_author']  = 1;
         $npost['post_date']    = date("Y-m-d H:i:s",$date);
         $npost['tags_input']   = implode(",",$tags);
-        $npost['post_content'] .= "<h2>".__("Read more at ").'<a href="'.$item['link'].'">'.$item['title'].'</a></h2>';
+        $npost['post_content'] .= "<font size=2>".__("Read more at ").'<a href="'.$item['link'].'">'.$item['title'].'</a></font>';
         wp_insert_post( $npost );
     }
 }
