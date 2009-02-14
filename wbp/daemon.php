@@ -13,7 +13,7 @@ foreach($blogs as $url => $blog) {
             /* page is down? */
             continue;
         }
-        /**/
+        /* */
         $rss = isset($GLOBALS['frss']) ? $GLOBALS['frss'] : $url;
         $title = isset($result['title']) ? $result['title'] : $rss;
         $blogs[$url] = array("rss"=>$rss,"title"=>$title);
