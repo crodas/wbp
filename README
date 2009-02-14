@@ -1,0 +1,8 @@
+= WBP =
+
+This project aims to create a complete Blogs' Planetarium (as http://planet-php.net/) from your Wordpress blog. Easy to configure.
+
+
+== How to install == 
+
+Download the package, uncompress into your plugin folder, enable the plug in and configure it.
