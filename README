@@ -1,8 +1,29 @@
 = WBP =
 
-This project aims to create a complete Blogs' Planetarium (as http://planet-php.net/) from your Wordpress blog. Easy to configure.
+This project aims to create a complete Blogs' Planetarium (as http://planet-php.net/)
+from your Wordpress blog. Easy to configure.
 
 
 == How to install == 
 
-Download the package, uncompress into your plugin folder, enable the plug in and configure it.
+Download the package, uncompress into your plugin folder, enable the plug in and
+configure it.
+
+== How to crawl? ==
+
+At this moment you should have console access to your server and setup a cron
+job to your site.
+
+I.E: suppose the WP is installed in /var/www/wp/
+
+php /var/www/wp/index.php
+
+I am working on a better crawling system, probably it will finished for tomorrow.
+
+
+== Important == 
+
+This script is was writting by me (crodas) in about 2 hours, probably it has some
+bugs, please report it to http://cesar.la/wbp, 
+
+I will do my best to growth this project.

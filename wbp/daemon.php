@@ -2,6 +2,15 @@
 
 $rblog = new lastRss;
 $blogs = wbp_blogs::GetAll();
+
+function posts_exits($title) {
+    $wpdb = & $GLOBALS['wpdb'];
+    $table_prefix = $GLOBALS['table_prefix'];
+    $title = addslashes($title);
+
+    return $wpdb->get_var("select * from ${table_prefix}posts where post_title='$title'") !== NULL;
+}
+
 foreach($blogs as $url => $blog) {
     echo "$url<br/>\n";
     flush();
@@ -20,6 +29,10 @@ foreach($blogs as $url => $blog) {
     }
 
     foreach($content['items'] as $item) {
+        if (posts_exits($item['title'])) {
+            continue;
+        }
+        print "Adding ".$item['title']."<br/>\n";
         if (isset($item['atom:summary'])) { 
             $item['description'] = $item['atom:summary'];
         }
