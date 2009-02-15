@@ -66,6 +66,9 @@ class wbp_blogs {
         $title = isset($result['title']) ? $result['title'] : $rss;
         $blogs[$url] = array("rss" => $rss,"title"=>$title);
         update_option('wbp_blogs',$blogs);
+
+        wp_insert_link(array("link_name" => $title,"link_url"=>$url));
+
         return true;
     }
 }
