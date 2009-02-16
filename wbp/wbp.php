@@ -21,23 +21,6 @@ function wbp_safe_include($page) {
     include($page);
 }
 
-function wbp_admin() {
-    if (isset($_POST['submit'])) {
-        if (wbp_blogs::Add($_POST['url'],$GLOBALS['msg']))  {
-            $GLOBALS['msg'] = __("Blog added!");
-        }
-    }
-    wbp_safe_include("view-admin.php");
-}
-
-function wbp_menu_admin() {
-    add_options_page('Blogs Planetarium', 'Blogs Planetarium', 8, __FILE__, 'wbp_admin');
-}
-
-function wbp_warning() {
-    wbp_safe_include("view-warning.php");
-}
-
 class wbp_blogs {
     function GetAll() {
         $blogs = get_option('wbp_blogs');
@@ -65,36 +48,71 @@ class wbp_blogs {
         $rss = isset($GLOBALS['frss']) ? $GLOBALS['frss'] : $url;
         $title = isset($result['title']) ? $result['title'] : $rss;
         $blogs[$url] = array("rss" => $rss,"title"=>$title);
+        /* */
         update_option('wbp_blogs',$blogs);
-
+        /* */
         wp_insert_link(array("link_name" => $title,"link_url"=>$url));
-
         return true;
     }
 }
 
-/* Delete ?*/
-if (isset($_GET['del'])) {
-    $blogs = wbp_blogs::GetAll();
-    foreach(array_keys($blogs) as $url) {
-        if ($_GET['del']==md5($url)) {
-            unset($blogs[$url]);
-            break;
+class wbp_html  {
+    function wbp_html() {
+        add_action('admin_menu', $this->fnc('menu_admin'));
+        add_action('admin_notices', $this->fnc('warning'));
+        $this->delete();
+    }
+
+    function warning() {
+        if (wbp_blogs::GetNumber() == 0) {
+            wbp_safe_include("view-warning.php");
         }
     }
-    update_option('wbp_blogs',$blogs);
+
+
+    function menu_admin() {
+        add_options_page('Blogs Planetarium', 'Blogs Planetarium', 8, __FILE__, wbp_html::fnc('admin') );
+    } 
+
+    function delete() {
+        /* Delete ?*/
+        if (isset($_GET['del'])) {
+            $blogs = wbp_blogs::GetAll();
+            foreach(array_keys($blogs) as $url) {
+                if ($_GET['del']==md5($url)) {
+                    unset($blogs[$url]);
+                    break;
+                }
+            }
+            update_option('wbp_blogs',$blogs);
+        }
+    }
+
+    function admin() {
+        if (isset($_POST['submit'])) {
+            if (wbp_blogs::Add($_POST['url'],$GLOBALS['msg']))  {
+                $GLOBALS['msg'] = __("Blog added!");
+            }
+        }
+        wbp_safe_include("view-admin.php");
+    }
+
+    function exec() {
+        if (isset($GLOBALS['argv']) || ($_GET['wbp_key'] == get_option('wbp_key') && $_SERVER['REMOTE_ADDR'] == get_option('wbp_ip'))) {
+            wbp_safe_include("daemon.php");
+            exit;
+        }
+    }
+
+    function fnc($func) {
+        return array('wbp_html',$func);
+    }
 }
 
-add_action('admin_menu', 'wbp_menu_admin');
-
-
-if (wbp_blogs::GetNumber() == 0) {
-    add_action('admin_notices', 'wbp_warning');
-}
-
-if (isset($GLOBALS['argv']) || ($_GET['wbp_key'] == get_option('wbp_key') && $_SERVER['REMOTE_ADDR'] == get_option('wbp_ip'))) {
-    wbp_safe_include("daemon.php");
-    exit;
-}
+/**
+ *  Exec the plug-in
+ *
+ */
+$c=new wbp_html;
 
 ?>
