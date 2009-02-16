@@ -1,4 +1,5 @@
 <?php
+set_time_limit(0);
 
 $rblog = new lastRss;
 $blogs = wbp_blogs::GetAll();
@@ -32,6 +33,7 @@ foreach($blogs as $url => $blog) {
             continue;
         }
         print "Adding ".$item['title']."<br/>\n";
+        flush();
         if (isset($item['atom:summary'])) { 
             $item['description'] = $item['atom:summary'];
         }

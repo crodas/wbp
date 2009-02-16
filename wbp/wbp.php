@@ -127,7 +127,6 @@ class wbp_html  {
             $keys[] = md5($key.$date);
             $keys[] = md5($key.($date-1));
             $keys[] = md5($key.($date+1));
-            print_r($keys);
             if (array_search($_GET['wbp_key'],$keys)===false) {
                 die(__("Bad hacker, no donut for you"));
             }
