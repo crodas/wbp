@@ -61,6 +61,17 @@ class wbp_html  {
         add_action('admin_menu', $this->fnc('menu_admin'));
         add_action('admin_notices', $this->fnc('warning'));
         $this->delete();
+        $this->exec();
+    }
+
+    function get_crawl_link() {
+        $link = wbp_html::get_key();
+        if ($link=="") return false;
+        return get_option('siteurl')."/?wbp_key=".md5($link.date("z"));
+    }
+
+    function get_key() {
+        return get_option('wbp_key') ? get_option('wbp_key') : "";
     }
 
     function warning() {
@@ -93,16 +104,38 @@ class wbp_html  {
             if (wbp_blogs::Add($_POST['url'],$GLOBALS['msg']))  {
                 $GLOBALS['msg'] = __("Blog added!");
             }
+        } else if (isset($_POST['key'])) {
+            update_option('wbp_key',$_POST['key']);
         }
         wbp_safe_include("view-admin.php");
     }
 
     function exec() {
-        if (isset($GLOBALS['argv']) || ($_GET['wbp_key'] == get_option('wbp_key') && $_SERVER['REMOTE_ADDR'] == get_option('wbp_ip'))) {
+        if (isset($GLOBALS['argv']) || $this->check_crawl_auth()) {
             wbp_safe_include("daemon.php");
             exit;
         }
     }
+    
+    
+    function check_crawl_auth() {
+        if (isSet($_GET['wbp_key'])) {
+            $key = $this->get_key();
+            if ($key=="") /* sorry not key set */ return false;
+            $date = date("z");
+            $keys   = array();
+            $keys[] = md5($key.$date);
+            $keys[] = md5($key.($date-1));
+            $keys[] = md5($key.($date+1));
+            print_r($keys);
+            if (array_search($_GET['wbp_key'],$keys)===false) {
+                die(__("Bad hacker, no donut for you"));
+            }
+            return true;
+        }
+        return false;
+    }
+
 
     function fnc($func) {
         return array('wbp_html',$func);
@@ -113,6 +146,6 @@ class wbp_html  {
  *  Exec the plug-in
  *
  */
-$c=new wbp_html;
+new wbp_html;
 
 ?>

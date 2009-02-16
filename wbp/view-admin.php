@@ -4,8 +4,11 @@
 <?php _e('Hey dude, you\'ve installed your WBP well');?> 
 </p>
 <form method="post">
-Key: <input type="input" name="key" />
-Allowed IP: <input type="input" name="ip" />
+Key: <input type="input" name="key" value="<?php echo wbp_html::get_key()?>" /><br/>
+<?php if (wbp_html::get_crawl_link()): ?>
+<p>Todays crawl URL: <a href="<?php echo wbp_html::get_crawl_link();?>"><?php echo wbp_html::get_crawl_link()?></a></p>
+<?php endif; ?>
+<input type="submit" value="Set key" />
 </form>
 <h2><?php _e('Blogs at the Planetarium')?></h2>
 <?php echo $GLOBALS['msg'] ?>
